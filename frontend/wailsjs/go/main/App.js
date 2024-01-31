@@ -9,3 +9,7 @@ export function GetWeather() {
 export function Greet() {
   return window['go']['main']['App']['Greet']();
 }
+
+export function NewTodo(arg1, arg2) {
+  return window['go']['main']['App']['NewTodo'](arg1, arg2);
+}

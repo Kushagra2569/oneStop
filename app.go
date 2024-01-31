@@ -8,9 +8,14 @@ import (
 
 // settings struct
 type settings struct {
-	location string `json:"stringValue"`
-	darkMode bool   `json:"boolValue"`
+	Location string `json:"stringValue"`
+	DarkMode bool   `json:"boolValue"`
 }
+
+const (
+	settingsFile = "settings.json"
+	todoFile     = "todo.json"
+)
 
 // App struct
 type App struct {
@@ -43,4 +48,35 @@ func (a *App) Greet() string {
 
 func (a *App) GetWeather() string {
 	return "Sunny"
+}
+
+func (a *App) NewTodo(desc string, priorityJS int) string {
+	var Pr priority
+
+	if priorityJS == 0 {
+		Pr = High
+	} else if priorityJS == 1 {
+		Pr = Medium
+	} else {
+		Pr = Low
+	}
+
+	todo := Todo{
+		Id:          1,
+		Description: desc,
+		Status:      true,
+		Priority:    Pr,
+	}
+	todoStr := todoToJson(todo)
+	return string(todoStr)
+}
+
+func (t *Todo) GetTodo() string {
+	todo := getTodo()
+	todoStr := todoToJson(todo)
+	return string(todoStr)
+}
+
+func (t *Todo) print() {
+	fmt.Println(t.Description)
 }

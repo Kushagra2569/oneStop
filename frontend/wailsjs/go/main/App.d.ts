@@ -4,3 +4,5 @@
 export function GetWeather():Promise<string>;
 
 export function Greet():Promise<string>;
+
+export function NewTodo(arg1:string,arg2:number):Promise<string>;
