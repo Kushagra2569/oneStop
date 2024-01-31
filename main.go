@@ -8,6 +8,10 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
+//Proposed features for now
+//Home page with weather, time, todos, and calendar as well as a small music widget
+//Todo List
+
 //go:embed all:frontend/dist
 var assets embed.FS
 
