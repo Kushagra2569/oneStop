@@ -1,18 +1,11 @@
 <script>
-  import { Greet } from "../wailsjs/go/main/App.js";
   import CurrentPage from "./CurrentPage.svelte";
 
   let currentPage = 0;
 
-  let val = "val";
-
   function changePage(index) {
     currentPage = index;
   }
-
-  Greet().then((res) => {
-    val = res;
-  });
 </script>
 
 <main>

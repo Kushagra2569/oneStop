@@ -41,16 +41,7 @@ func settingsToJson(set settings) string {
 	return string(json)
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet() string {
-	return fmt.Sprintf("hello")
-}
-
-func (a *App) GetWeather() string {
-	return "Sunny"
-}
-
-func (a *App) NewTodo(desc string, priorityJS int) string {
+func (t *Todos) NewTodo(desc string, priorityJS int) string {
 	var Pr priority
 
 	if priorityJS == 0 {
@@ -67,16 +58,15 @@ func (a *App) NewTodo(desc string, priorityJS int) string {
 		Status:      true,
 		Priority:    Pr,
 	}
-	todoStr := todoToJson(todo)
-	return string(todoStr)
+	t.Todos = append(t.Todos, todo)
+	return string(todosToJson(*t))
 }
 
-func (t *Todo) GetTodo() string {
-	todo := getTodo()
-	todoStr := todoToJson(todo)
+func (t *Todos) GetTodos() string {
+	if !t.fileLoaded {
+		*t = getTodosFromFile()
+		t.fileLoaded = true
+	}
+	todoStr := todosToJson(*t) //Kush: fix unnecessary conversion from json to struct and back to json
 	return string(todoStr)
-}
-
-func (t *Todo) print() {
-	fmt.Println(t.Description)
 }

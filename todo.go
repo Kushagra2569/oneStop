@@ -15,30 +15,35 @@ type Todo struct {
 	Priority    priority `json:"priorityValue"`
 }
 
+type Todos struct {
+	Todos      []Todo `json:"todos"`
+	fileLoaded bool
+}
+
 const (
 	High priority = iota + 1
 	Medium
 	Low
 )
 
-func todoToJson(todo Todo) []byte {
-	json, err := json.Marshal(todo)
+func todosToJson(todos Todos) []byte {
+	json, err := json.Marshal(todos)
 	if err != nil {
 		fmt.Println(err)
 	}
 	return json
 }
 
-func JsonToTodo(todoStr []byte) Todo {
-	var todo Todo
-	err := json.Unmarshal(todoStr, &todo)
+func JsonToTodos(todoStr []byte) Todos {
+	var todos Todos
+	err := json.Unmarshal(todoStr, &todos)
 	if err != nil {
 		fmt.Println(err)
 	}
-	return todo
+	return todos
 }
 
-func getTodo() Todo {
+func getTodosFromFile() Todos {
 	todoStr, err := os.ReadFile(todoFile)
 	if err != nil {
 		fmt.Println(err)
@@ -46,12 +51,12 @@ func getTodo() Todo {
 			fmt.Println("File does not exist")
 		}
 	}
-	todo := JsonToTodo(todoStr)
-	return todo
+	todos := JsonToTodos(todoStr)
+	return todos
 }
 
-func saveTodoToFile(todo Todo) {
-	json := todoToJson(todo)
+func saveTodoToFile(todos Todos) {
+	json := todosToJson(todos)
 	err := os.WriteFile(todoFile, json, 0666)
 	if err != nil {
 		fmt.Println(err)

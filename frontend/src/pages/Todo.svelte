@@ -1,6 +1,6 @@
 <script>
-  import { NewTodo } from "../../wailsjs/go/main/App.js";
-  import { GetTodo } from "../../wailsjs/go/main/Todo.js";
+  import { NewTodo } from "../../wailsjs/go/main/Todos.js";
+  import { GetTodos } from "../../wailsjs/go/main/Todos.js";
 
   let val = "Hello World";
   function addTodo() {
@@ -10,14 +10,14 @@
   }
 
   function print() {
-    GetTodo().then((res) => {
+    GetTodos().then((res) => {
       val = res;
     });
   }
 </script>
 
 <main>
-  <button on:click={addTodo}>Add Todo</button>
   <p>{val}</p>
+  <button on:click={addTodo}>Add Todo</button>
   <button on:click={print}>print Todo</button>
 </main>
