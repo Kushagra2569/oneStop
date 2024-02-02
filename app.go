@@ -40,33 +40,3 @@ func settingsToJson(set settings) string {
 	}
 	return string(json)
 }
-
-func (t *Todos) NewTodo(desc string, priorityJS int) string {
-	var Pr priority
-
-	if priorityJS == 0 {
-		Pr = High
-	} else if priorityJS == 1 {
-		Pr = Medium
-	} else {
-		Pr = Low
-	}
-
-	todo := Todo{
-		Id:          1,
-		Description: desc,
-		Status:      true,
-		Priority:    Pr,
-	}
-	t.Todos = append(t.Todos, todo)
-	return string(todosToJson(*t))
-}
-
-func (t *Todos) GetTodos() string {
-	if !t.fileLoaded {
-		*t = getTodosFromFile()
-		t.fileLoaded = true
-	}
-	todoStr := todosToJson(*t) //Kush: fix unnecessary conversion from json to struct and back to json
-	return string(todoStr)
-}
