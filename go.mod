@@ -1,4 +1,4 @@
-module changeme
+module oneStop
 
 go 1.21
 

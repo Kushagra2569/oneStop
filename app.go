@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // settings struct
@@ -39,4 +41,18 @@ func settingsToJson(set settings) string {
 		fmt.Println(err)
 	}
 	return string(json)
+}
+
+func (a *App) OpenFile() (string, error) {
+	dialogOptions := runtime.OpenDialogOptions{
+		Title:           "Open File",
+		ShowHiddenFiles: true,
+	}
+	fmt.Println("OpenFile called")
+	selectedFile, err := runtime.OpenFileDialog(a.ctx, dialogOptions)
+	if err != nil {
+		return "", err
+	}
+	fmt.Println("Selected file: ", selectedFile)
+	return selectedFile, err
 }

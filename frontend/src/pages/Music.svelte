@@ -1,3 +1,10 @@
+<script>
+  import { OpenFile } from "../../wailsjs/go/main/App.js";
+  function openDirectory() {
+    OpenFile();
+  }
+</script>
+
 <main>
   <div class="min-h-screen flex flex-col bg-gray-100 p-4">
     <!-- Music List -->
@@ -15,7 +22,10 @@
         <!-- Repeat for each song -->
       </ul>
     </div>
-
+    <button
+      class="bg-blue-500 text-white px-2 py-1 rounded"
+      on:click={openDirectory}>open file</button
+    >
     <!-- Music Player -->
     <div class="mt-4 p-4 bg-white rounded shadow">
       <h2 class="text-2xl mb-4">Now Playing</h2>
