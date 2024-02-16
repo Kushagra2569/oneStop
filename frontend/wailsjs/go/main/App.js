@@ -5,3 +5,7 @@
 export function OpenFile() {
   return window['go']['main']['App']['OpenFile']();
 }
+
+export function OpenMultipleFiles() {
+  return window['go']['main']['App']['OpenMultipleFiles']();
+}

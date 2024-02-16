@@ -1,7 +1,25 @@
 <script>
-  import { OpenFile } from "../../wailsjs/go/main/App.js";
+  import { OpenMultipleFiles } from "../../wailsjs/go/main/App.js";
+  import { GetMusicList } from "../../wailsjs/go/main/MusicList.js";
+  import { onMount } from "svelte";
+  import { GetMusicListFromLocalFiles } from "../../wailsjs/go/main/MusicList.js";
+
+  let musicList = [];
+
+  onMount(() => {
+    GetMusicList();
+  });
+
   function openDirectory() {
-    OpenFile();
+    OpenMultipleFiles().then((res) => {
+      if (res) {
+        console.log(res);
+        GetMusicListFromLocalFiles(res).then((res) => {
+          musicList = res;
+          console.log(musicList);
+        });
+      }
+    });
   }
 </script>
 

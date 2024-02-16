@@ -50,13 +50,25 @@ func (a *App) OpenFile() (string, error) {
 		Title:           "Open File",
 		ShowHiddenFiles: true,
 	}
-	fmt.Println("OpenFile called")
 	selectedFile, err := runtime.OpenFileDialog(a.ctx, dialogOptions)
 	if err != nil {
 		return "", err
 	}
 	fmt.Println("Selected file: ", selectedFile)
 	return selectedFile, err
+}
+
+func (a *App) OpenMultipleFiles() ([]string, error) {
+	dialogOptions := runtime.OpenDialogOptions{
+		Title:           "Open File",
+		ShowHiddenFiles: true,
+	}
+	selectedFiles, err := runtime.OpenMultipleFilesDialog(a.ctx, dialogOptions)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("Selected files: ", selectedFiles)
+	return selectedFiles, err
 }
 
 func LoadFile(path string) ([]byte, error) {
