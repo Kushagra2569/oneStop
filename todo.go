@@ -45,7 +45,7 @@ func JsonToTodos(todoStr []byte) Todos {
 }
 
 func getTodosFromFile() Todos {
-	todoStr, err := os.ReadFile(todoFile)
+	todoStr, err := LoadFile(todoFile)
 	if err != nil {
 		fmt.Println(err)
 		if os.IsNotExist(err) {
@@ -58,7 +58,7 @@ func getTodosFromFile() Todos {
 
 func saveTodosToFile(todos Todos) {
 	json := todosToJson(todos)
-	err := os.WriteFile(todoFile, json, 0666)
+	err := WriteFile(todoFile, json)
 	if err != nil {
 		fmt.Println(err)
 	}

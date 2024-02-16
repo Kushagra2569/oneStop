@@ -4,7 +4,10 @@ go 1.21
 
 toolchain go1.21.6
 
-require github.com/wailsapp/wails/v2 v2.7.1
+require (
+	github.com/dhowden/tag v0.0.0-20240122214204-713ab0e94639
+	github.com/wailsapp/wails/v2 v2.7.1
+)
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect

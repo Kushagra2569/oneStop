@@ -19,6 +19,7 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 	todos := &Todos{}
+	music := &MusicList{}
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -33,6 +34,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 			todos,
+			music,
 		},
 	})
 

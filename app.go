@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -17,6 +18,7 @@ type settings struct {
 const (
 	settingsFile = "settings.json"
 	todoFile     = "todo.json"
+	musicFile    = "music.json"
 )
 
 // App struct
@@ -55,4 +57,14 @@ func (a *App) OpenFile() (string, error) {
 	}
 	fmt.Println("Selected file: ", selectedFile)
 	return selectedFile, err
+}
+
+func LoadFile(path string) ([]byte, error) {
+	file, err := os.ReadFile(path)
+	return file, err
+}
+
+func WriteFile(path string, data []byte) error {
+	err := os.WriteFile(path, data, 0666)
+	return err
 }
