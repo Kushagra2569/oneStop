@@ -4,19 +4,45 @@
   import { onMount } from "svelte";
   import { GetMusicListFromLocalFiles } from "../../wailsjs/go/main/MusicList.js";
 
+  let list;
   let musicList = [];
+  let currentSong = 0;
+  let audioPath = "";
+  let audioElement;
+
+  function playAudio() {
+    audioElement.play();
+  }
+
+  function pauseAudio() {
+    audioElement.pause();
+  }
+
+  function stopAudio() {
+    audioElement.pause();
+    audioElement.currentTime = 0;
+  }
 
   onMount(() => {
-    GetMusicList();
+    GetMusicList().then((res) => {
+      list = JSON.parse(res);
+      musicList = list.musicList;
+    });
   });
+
+  function handleClick(index) {
+    currentSong = index;
+    audioPath = musicList[index].path;
+    console.log("clicked on", musicList[index]);
+    playAudio();
+  }
 
   function openDirectory() {
     OpenMultipleFiles().then((res) => {
       if (res) {
-        console.log(res);
         GetMusicListFromLocalFiles(res).then((res) => {
-          musicList = res;
-          console.log(musicList);
+          list = JSON.parse(res);
+          musicList = list.musicList;
         });
       }
     });
@@ -24,38 +50,39 @@
 </script>
 
 <main>
-  <div class="min-h-screen flex flex-col bg-gray-100 p-4">
-    <!-- Music List -->
-    <div class="flex-grow overflow-auto">
-      <h2 class="text-2xl mb-4">Music List</h2>
+  <div class="h-screen bg-bg-color text-gray-900 text-text-color">
+    <!-- Music list -->
+    <div class="p-4">
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        on:click={openDirectory}>Open Directory</button
+      >
       <ul>
-        <li class="mb-2 p-2 bg-white rounded shadow">
-          <div class="flex justify-between items-center">
-            <span>Song 1</span>
-            <button class="bg-blue-500 text-white px-2 py-1 rounded"
-              >Play</button
+        {#each musicList as song, index}
+          <li>
+            <button
+              ><h class="text-white" on:click={() => handleClick(index)}
+                >{song.title} - {song.artist}</h
+              ></button
             >
-          </div>
-        </li>
-        <!-- Repeat for each song -->
+          </li>
+        {/each}
       </ul>
     </div>
-    <button
-      class="bg-blue-500 text-white px-2 py-1 rounded"
-      on:click={openDirectory}>open file</button
-    >
-    <!-- Music Player -->
-    <div class="mt-4 p-4 bg-white rounded shadow">
-      <h2 class="text-2xl mb-4">Now Playing</h2>
-      <div class="flex items-center">
-        <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2"
-          >Prev</button
-        >
-        <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2"
-          >Play</button
-        >
-        <button class="bg-blue-500 text-white px-2 py-1 rounded">Next</button>
-      </div>
+
+    <!-- Play-next bar -->
+    <div class="fixed bottom-0 left-0 right-0 p-4 bg-bg-color">
+      <audio src={audioPath} bind:this={audioElement}></audio>
+      <button
+        on:click={playAudio}
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >Play</button
+      >
+      <button
+        on:click={pauseAudio}
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
+        >pause</button
+      >
     </div>
   </div>
 </main>

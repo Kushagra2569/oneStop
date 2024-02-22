@@ -9,10 +9,6 @@ import (
 	"github.com/dhowden/tag"
 )
 
-//TODO: convert from musicList struct to json func
-//read file function and return musicList struct
-//save musicList struct to file
-
 type Music struct {
 	Path     string `json:"path"`
 	FileName string `json:"fileName"`
@@ -114,11 +110,33 @@ func (m *MusicList) GetMusicListFromLocalFiles(musicListPaths []string) string {
 	for _, musicPath := range musicListPaths {
 		music := musicMetadata(musicPath)
 		m.MusicList = append(m.MusicList, music)
+		m.IdNum = m.IdNum + 1
 	}
+	m.SaveMusicListToFile()
 	return string(musicListToJson(*m))
 }
 
+func (m *MusicList) deleteDuplicateMusic() {
+	uniqueMusic := []Music{}
+	uniqueMusicMap := make(map[string]string)
+	for _, music := range m.MusicList {
+		if music.Title == "" {
+			if _, value := uniqueMusicMap[music.Path]; !value {
+				uniqueMusicMap[music.FileName] = music.FileName
+				uniqueMusic = append(uniqueMusic, music)
+			}
+		} else {
+			if _, value := uniqueMusicMap[music.Title]; !value {
+				uniqueMusicMap[music.Title] = music.Artist
+				uniqueMusic = append(uniqueMusic, music)
+			}
+		}
+	}
+	m.MusicList = uniqueMusic
+}
+
 func (m *MusicList) SaveMusicListToFile() {
+	m.deleteDuplicateMusic()
 	json := musicListToJson(*m)
 	err := WriteFile(musicFile, json)
 	if err != nil {
