@@ -6,11 +6,14 @@ toolchain go1.21.6
 
 require (
 	github.com/dhowden/tag v0.0.0-20240122214204-713ab0e94639
+	github.com/ebitengine/oto/v3 v3.1.0
+	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/wailsapp/wails/v2 v2.7.1
 )
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
+	github.com/ebitengine/purego v0.5.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect

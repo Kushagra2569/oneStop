@@ -1,27 +1,15 @@
 <script>
+  import { onMount } from "svelte";
   import { OpenMultipleFiles } from "../../wailsjs/go/main/App.js";
   import { GetMusicList } from "../../wailsjs/go/main/MusicList.js";
-  import { onMount } from "svelte";
   import { GetMusicListFromLocalFiles } from "../../wailsjs/go/main/MusicList.js";
+  import { Play } from "../../wailsjs/go/main/MusicList.js";
 
   let list;
   let musicList = [];
   let currentSong = 0;
   let audioPath = "";
   let audioElement;
-
-  function playAudio() {
-    audioElement.play();
-  }
-
-  function pauseAudio() {
-    audioElement.pause();
-  }
-
-  function stopAudio() {
-    audioElement.pause();
-    audioElement.currentTime = 0;
-  }
 
   onMount(() => {
     GetMusicList().then((res) => {
@@ -34,7 +22,10 @@
     currentSong = index;
     audioPath = musicList[index].path;
     console.log("clicked on", musicList[index]);
-    playAudio();
+
+    Play(index).then((res) => {
+      console.log(res);
+    });
   }
 
   function openDirectory() {
@@ -74,12 +65,10 @@
     <div class="fixed bottom-0 left-0 right-0 p-4 bg-bg-color">
       <audio src={audioPath} bind:this={audioElement}></audio>
       <button
-        on:click={playAudio}
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >Play</button
       >
       <button
-        on:click={pauseAudio}
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
         >pause</button
       >
