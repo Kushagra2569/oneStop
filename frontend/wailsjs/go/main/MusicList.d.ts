@@ -5,6 +5,6 @@ export function GetMusicList():Promise<string>;
 
 export function GetMusicListFromLocalFiles(arg1:Array<string>):Promise<string>;
 
-export function Play(arg1:number):Promise<string>;
+export function MusicController(arg1:number,arg2:number):Promise<string>;
 
 export function SaveMusicListToFile():Promise<void>;

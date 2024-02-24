@@ -3,7 +3,7 @@
   import { OpenMultipleFiles } from "../../wailsjs/go/main/App.js";
   import { GetMusicList } from "../../wailsjs/go/main/MusicList.js";
   import { GetMusicListFromLocalFiles } from "../../wailsjs/go/main/MusicList.js";
-  import { Play } from "../../wailsjs/go/main/MusicList.js";
+  import { MusicController } from "../../wailsjs/go/main/MusicList.js";
 
   let list;
   let musicList = [];
@@ -18,12 +18,30 @@
     });
   });
 
-  function handleClick(index) {
+  function handleClickSong(index) {
     currentSong = index;
     audioPath = musicList[index].path;
     console.log("clicked on", musicList[index]);
 
-    Play(index).then((res) => {
+    MusicController(index, 1).then((res) => {
+      console.log(res);
+    });
+  }
+
+  function playsong() {
+    audioPath = musicList[currentSong].path;
+    console.log("clicked on", musicList[currentSong]);
+
+    MusicController(currentSong, 2).then((res) => {
+      console.log(res);
+    });
+  }
+
+  function pausesong() {
+    audioPath = musicList[currentSong].path;
+    console.log("clicked on", musicList[currentSong]);
+
+    MusicController(currentSong, 0).then((res) => {
       console.log(res);
     });
   }
@@ -52,7 +70,7 @@
         {#each musicList as song, index}
           <li>
             <button
-              ><h class="text-white" on:click={() => handleClick(index)}
+              ><h class="text-white" on:click={() => handleClickSong(index)}
                 >{song.title} - {song.artist}</h
               ></button
             >
@@ -65,10 +83,12 @@
     <div class="fixed bottom-0 left-0 right-0 p-4 bg-bg-color">
       <audio src={audioPath} bind:this={audioElement}></audio>
       <button
+        on:click={playsong}
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >Play</button
       >
       <button
+        on:click={pausesong}
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
         >pause</button
       >

@@ -152,11 +152,11 @@ func (m *MusicList) SaveMusicListToFile() {
 }
 
 //play music function
-//TODO: add way to stop music
 //TODO: add way to play next music
-//TODO: handle changes for switching music in between
+//TODO: add ability to change volume as well as return current volume and currentPlaying music in a json struct
+//so create a struct that will hold the current playing music and the volume
 
-func (m *MusicList) Play(id int) string {
+func (m *MusicList) MusicController(id int, action int) string {
 	musicPath := m.MusicList[id].Path
 
 	if id >= len(m.MusicList) || id < 0 {
@@ -185,31 +185,54 @@ func (m *MusicList) Play(id int) string {
 		<-readyChan
 	}
 
-	if m.currentPlayer != nil {
-		m.currentPlayer.Close()
+	if action == 0 {
+		if m.currentPlayer != nil {
+			if m.currentPlayer.IsPlaying() {
+				m.currentPlayer.Pause()
+			}
+		}
+		return "Paused " + m.MusicList[id].Title
+
+	} else if action == 1 {
+
+		if m.currentPlayer != nil {
+			m.currentPlayer.Close()
+		}
+
+		fileBytes, err := os.ReadFile(musicPath)
+		if err != nil {
+			return "Error opening file"
+		}
+
+		// Convert the pure bytes into a reader object that can be used with the mp3 decoder
+		fileBytesReader := bytes.NewReader(fileBytes)
+
+		//Decode mp3 file
+		decodedMp3, err := mp3.NewDecoder(fileBytesReader)
+		if err != nil {
+			return "Error decoding mp3"
+		}
+
+		// Create a new 'player' that will handle our sound. Paused by default.
+		playerVar := m.otoCtx.NewPlayer(decodedMp3)
+		m.currentPlayer = playerVar
+
+		go player(m.currentPlayer)
+
+		return "Playing " + m.MusicList[id].Title
+
+	} else if action == 2 {
+		if m.currentPlayer != nil {
+			if !m.currentPlayer.IsPlaying() {
+				go player(m.currentPlayer)
+			}
+		}
+		return "Resumed " + m.MusicList[id].Title
+
+	} else {
+		return "Invalid action"
+
 	}
-
-	fileBytes, err := os.ReadFile(musicPath)
-	if err != nil {
-		return "Error opening file"
-	}
-
-	// Convert the pure bytes into a reader object that can be used with the mp3 decoder
-	fileBytesReader := bytes.NewReader(fileBytes)
-
-	//Decode mp3 file
-	decodedMp3, err := mp3.NewDecoder(fileBytesReader)
-	if err != nil {
-		return "Error decoding mp3"
-	}
-
-	// Create a new 'player' that will handle our sound. Paused by default.
-	playerVar := m.otoCtx.NewPlayer(decodedMp3)
-	m.currentPlayer = playerVar
-
-	go player(m.currentPlayer)
-
-	return "Playing " + m.MusicList[id].Title
 }
 
 func player(player *oto.Player) {
@@ -229,9 +252,10 @@ func player(player *oto.Player) {
 	// player.Play()
 
 	// If you don't want the player/sound anymore simply close
-	err := player.Close()
-	if err != nil {
-		fmt.Println("player.Close failed: " + err.Error())
-	}
+	// Kush commented this part out because on pausing the player, it closed it which made it impossible to resume
+	// err := player.Close()
+	// if err != nil {
+	// 	fmt.Println("player.Close failed: " + err.Error())
+	// }
 
 }

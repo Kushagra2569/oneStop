@@ -10,8 +10,8 @@ export function GetMusicListFromLocalFiles(arg1) {
   return window['go']['main']['MusicList']['GetMusicListFromLocalFiles'](arg1);
 }
 
-export function Play(arg1) {
-  return window['go']['main']['MusicList']['Play'](arg1);
+export function MusicController(arg1, arg2) {
+  return window['go']['main']['MusicList']['MusicController'](arg1, arg2);
 }
 
 export function SaveMusicListToFile() {
