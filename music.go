@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -21,9 +22,11 @@ type Music struct {
 }
 
 type MusicList struct {
-	MusicList  []Music `json:"musicList"`
-	IdNum      int     `json:"idNum"`
-	fileLoaded bool
+	MusicList     []Music `json:"musicList"`
+	IdNum         int     `json:"idNum"`
+	otoCtx        *oto.Context
+	currentPlayer *oto.Player
+	fileLoaded    bool
 }
 
 func musicMetadata(musicPath string) Music {
@@ -92,6 +95,7 @@ func (m *MusicList) GetMusicList() string {
 	if !m.fileLoaded {
 		*m = LoadMusicListFromFile()
 		m.fileLoaded = true
+		m.otoCtx = nil
 	}
 	musicListStr := musicListToJson(*m)
 	return string(musicListStr)
@@ -153,67 +157,81 @@ func (m *MusicList) SaveMusicListToFile() {
 //TODO: handle changes for switching music in between
 
 func (m *MusicList) Play(id int) string {
-  if id >= len(m.MusicList) || id < 0 {
-    return "Invalid id"
-  }
-  musicPath := m.MusicList[id].Path
-  return player(musicPath)
-}
+	musicPath := m.MusicList[id].Path
 
-func player(musicPath string) string {
-  	file, err := os.Open(musicPath)
-	if err != nil {
-		return "Failed to play" + musicPath
+	if id >= len(m.MusicList) || id < 0 {
+		return "Invalid id"
 	}
+	if m.otoCtx == nil {
+		op := &oto.NewContextOptions{}
+
+		op.SampleRate = 48000
+
+		// Number of channels (aka locations) to play sounds from. Either 1 or 2.
+		// 1 is mono sound, and 2 is stereo (most speakers are stereo).
+		op.ChannelCount = 2
+
+		// Format of the source. go-mp3's format is signed 16bit integers.
+		op.Format = oto.FormatSignedInt16LE
+
+		// Remember that you should **not** create more than one context
+		otoCtx, readyChan, err := oto.NewContext(op)
+		if err != nil {
+			panic("oto.NewContext failed: " + err.Error())
+		}
+		m.otoCtx = otoCtx
+
+		// It might take a bit for the hardware audio devices to be ready, so we wait on the channel.
+		<-readyChan
+	}
+
+	if m.currentPlayer != nil {
+		m.currentPlayer.Close()
+	}
+
+	fileBytes, err := os.ReadFile(musicPath)
+	if err != nil {
+		return "Error opening file"
+	}
+
+	// Convert the pure bytes into a reader object that can be used with the mp3 decoder
+	fileBytesReader := bytes.NewReader(fileBytes)
 
 	//Decode mp3 file
-	decodedMp3, err := mp3.NewDecoder(file)
+	decodedMp3, err := mp3.NewDecoder(fileBytesReader)
 	if err != nil {
-		return "Failed to play" + musicPath
+		return "Error decoding mp3"
 	}
-
-	op := &oto.NewContextOptions{}
-
-	op.SampleRate = 48000
-
-	// Number of channels (aka locations) to play sounds from. Either 1 or 2.
-	// 1 is mono sound, and 2 is stereo (most speakers are stereo).
-	op.ChannelCount = 2
-
-	// Format of the source. go-mp3's format is signed 16bit integers.
-	op.Format = oto.FormatSignedInt16LE
-
-	// Remember that you should **not** create more than one context
-	otoCtx, readyChan, err := oto.NewContext(op)
-	if err != nil {
-		panic("oto.NewContext failed: " + err.Error())
-	}
-	// It might take a bit for the hardware audio devices to be ready, so we wait on the channel.
-	<-readyChan
 
 	// Create a new 'player' that will handle our sound. Paused by default.
-	player := otoCtx.NewPlayer(decodedMp3)
+	playerVar := m.otoCtx.NewPlayer(decodedMp3)
+	m.currentPlayer = playerVar
 
+	go player(m.currentPlayer)
+
+	return "Playing " + m.MusicList[id].Title
+}
+
+func player(player *oto.Player) {
 	// Play starts playing the sound and returns without waiting for it (Play() is async).
 	player.Play()
 
-  for player.IsPlaying() {
-    time.Sleep(time.Millisecond)
-  }
+	for player.IsPlaying() {
+		time.Sleep(time.Millisecond)
+	}
 
-  // Now that the sound finished playing, we can restart from the beginning (or go to any location in the sound) using seek
-    // newPos, err := player.(io.Seeker).Seek(0, io.SeekStart)
-    // if err != nil{
-    //     panic("player.Seek failed: " + err.Error())
-    // }
-    // println("Player is now at position:", newPos)
-    // player.Play()
+	// Now that the sound finished playing, we can restart from the beginning (or go to any location in the sound) using seek
+	// newPos, err := player.(io.Seeker).Seek(0, io.SeekStart)
+	// if err != nil{
+	//     panic("player.Seek failed: " + err.Error())
+	// }
+	// println("Player is now at position:", newPos)
+	// player.Play()
 
-    // If you don't want the player/sound anymore simply close
-    err = player.Close()
-    if err != nil {
-        panic("player.Close failed: " + err.Error())
-    }
+	// If you don't want the player/sound anymore simply close
+	err := player.Close()
+	if err != nil {
+		fmt.Println("player.Close failed: " + err.Error())
+	}
 
-  return "Playing " + musicPath
 }
