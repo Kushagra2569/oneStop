@@ -199,6 +199,7 @@ func (m *MusicList) MusicController(id int, action int) string {
 			m.currentPlayer.Close()
 		}
 
+		//reading the mp3 file, check out streaming option as well from oto library example, currently not opted for it as file needed to be closed addtionally after streaming
 		fileBytes, err := os.ReadFile(musicPath)
 		if err != nil {
 			return "Error opening file"
