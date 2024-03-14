@@ -8,6 +8,7 @@ require (
 	github.com/dhowden/tag v0.0.0-20240122214204-713ab0e94639
 	github.com/ebitengine/oto/v3 v3.1.0
 	github.com/hajimehoshi/go-mp3 v0.3.4
+	github.com/joho/godotenv v1.5.1
 	github.com/wailsapp/wails/v2 v2.7.1
 )
 

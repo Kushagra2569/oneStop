@@ -4,8 +4,9 @@
   import Calendar from "./pages/Calendar.svelte";
   import Chat from "./pages/Chat.svelte";
   import Music from "./pages/Music.svelte";
+  import Weather from "./pages/Weather.svelte";
 
-  let pages = [Home, Todo, Calendar, Chat, Music];
+  let pages = [Home, Todo, Calendar, Chat, Music, Weather];
 
   export let currentPage = 0;
 </script>

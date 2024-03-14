@@ -20,6 +20,7 @@ func main() {
 	app := NewApp()
 	todos := &Todos{}
 	music := &MusicList{}
+	weather := &WeatherData{}
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -35,6 +36,7 @@ func main() {
 			app,
 			todos,
 			music,
+			weather,
 		},
 	})
 

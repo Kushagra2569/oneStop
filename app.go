@@ -19,6 +19,7 @@ const (
 	settingsFile = "settings.json"
 	todoFile     = "todo.json"
 	musicFile    = "music.json"
+	cityFile     = "city.json"
 )
 
 // App struct

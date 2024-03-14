@@ -19,6 +19,7 @@
       <div><button on:click={() => changePage(2)}>Calendar</button></div>
       <div><button on:click={() => changePage(3)}>Chat</button></div>
       <div><button on:click={() => changePage(4)}>Music</button></div>
+      <div><button on:click={() => changePage(5)}>Weather</button></div>
     </div>
     <CurrentPage {currentPage} />
 
