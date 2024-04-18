@@ -2,7 +2,8 @@
   import { GetWeather } from "../../wailsjs/go/main/WeatherData.js";
   import { onMount } from "svelte";
 
-  let weatherjson = "";
+  let weatherjson;
+  let city = "";
 
   onMount(() => {
     getweatherdata();
@@ -20,6 +21,12 @@
 </script>
 
 <main>
-  Weather
-  <button on:click={printw}>print weather</button>
+  <div class="pt-24 flex flex-col items-center">
+    <input bind:value={city} type="text" />
+    <button on:click={printw}>print weather</button>
+    <button on:click={getweatherdata}>get weather</button>
+  </div>
+  <div>
+    <p bind:value={weatherjson.name}></p>
+  </div>
 </main>
