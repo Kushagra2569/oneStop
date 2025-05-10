@@ -27,6 +27,6 @@
     <button on:click={getweatherdata}>get weather</button>
   </div>
   <div>
-    <p bind:value={weatherjson.name}></p>
+    <p bind:this={weatherjson.name}></p>
   </div>
 </main>
